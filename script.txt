@@ -1,0 +1,20 @@
+CREATE TABLE dblivraria;
+USE dblivraria;
+
+CREATE TABLE login(
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  nome VARCHAR(150),
+  email VARCHAR(150) UNIQUE,
+  senha VARCHAR(100),
+  senhahash VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE livro(
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  isbn VARCHAR(20) UNIQUE,
+  nome VARCHAR(150),
+  descricao TEXT,
+  valor DECIMAL(10,2)
+);
+describe livro;
+describe login;
