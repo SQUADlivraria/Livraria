@@ -11,7 +11,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IPasswordHasher<Login>, PasswordHasher<Login>>();
 
 builder.Services.AddScoped<ILoginRepository, LoginRepository>();
-builder.Services.AddScoped<ILivroRepository, LivroRepository>();
+
 builder.Services.AddAuthentication(
     CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
@@ -22,9 +22,7 @@ builder.Services.AddAuthentication(
 //Controla o acesso as páginas
 builder.Services.AddAuthorization();
 
-//Permite gerar e verificar hashes de senhas
-builder.Services.AddScoped<
-    IPasswordHasher<Login>, PasswordHasher<Login>>();
+
 
 var app = builder.Build();
 
