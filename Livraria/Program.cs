@@ -24,7 +24,9 @@ builder.Services.AddAuthentication(
 //Controla o acesso as páginas
 builder.Services.AddAuthorization();
 
-
+//Permite gerar e verificar hashes de senhas
+builder.Services.AddScoped<
+    IPasswordHasher<Login>, PasswordHasher<Login>>();
 
 var app = builder.Build();
 
@@ -49,7 +51,7 @@ app.MapStaticAssets();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
+    pattern: "{controller=Conta}/{action=Login}/{id?}")
     .WithStaticAssets();
 
 
