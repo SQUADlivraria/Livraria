@@ -1,8 +1,36 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Início";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container py-5">
+    <div class="text-center">
+        <h1 class="display-4 fw-bold">
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <span>Bem-vindo, @User.Identity.Name!</span>
+            }
+            else
+            {
+                <span>Bem-vindo à Livraria!</span>
+            }
+        </h1>
+
+        <p class="lead mt-3">
+            Encontre, cadastre e organize seus livros em um só lugar.
+        </p>
+    </div>
+
+    <div class="d-flex justify-content-center gap-3 mt-4 flex-wrap">
+        <a asp-controller="Livro"
+           asp-action="Cadastrar"
+           class="btn btn-primary btn-lg">
+            Cadastrar livros
+        </a>
+
+        <a asp-controller="Livro"
+           asp-action="Index"
+           class="btn btn-outline-primary btn-lg">
+            Ver livros cadastrados
+        </a>
+    </div>
 </div>
