@@ -10,7 +10,9 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddScoped<IPasswordHasher<Login>, PasswordHasher<Login>>();
 
-builder.Services.AddScoped<ILoginRepository, LoginRepository>();
+builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+
+builder.Services.AddScoped<ILivroRepository, LivroRepository>();
 
 builder.Services.AddAuthentication(
     CookieAuthenticationDefaults.AuthenticationScheme)
@@ -31,6 +33,8 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
 }
+
+app.UseStaticFiles();
 app.UseRouting();
 
 //Verifica se o usuário está autenticado
@@ -40,6 +44,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
+
+
 
 app.MapControllerRoute(
     name: "default",

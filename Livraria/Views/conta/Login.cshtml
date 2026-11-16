@@ -1,0 +1,41 @@
+﻿@model Livraria.Models.LoginViewModel
+
+<link rel="stylesheet" href="~/css/login.css" asp-append-version="true" />
+    <div class="row justify-content-center">
+        <div class="col-md-4">
+            <h1>Login</h1>
+        <p>Entre na sua conta para continuar.</p>
+
+        <form asp-controller="Conta"
+              asp-action="Login"
+              method="post">
+
+            @Html.AntiForgeryToken()
+
+            <div asp-validation-summary="ModelOnly"
+                 class="mensagem-erro"></div>
+
+            <div class="campo">
+                <label asp-for="Email">E-mail</label>
+                <input required asp-for="Email" placeholder="Digite seu e-mail" />
+                <span asp-validation-for="Email"></span>
+            </div>
+
+            <div class="campo">
+                <label asp-for="Senha">Senha</label>
+                <input required asp-for="Senha"
+                       type="password"
+                       placeholder="Digite sua senha" />
+                <span asp-validation-for="Senha"></span>
+            </div>
+
+            <button type="submit">Entrar</button>
+
+            <p class="cadastro">
+                Não tem uma conta?
+                <a asp-controller="Conta"
+                   asp-action="CriarConta">Cadastre-se</a>
+            </p>
+        </form>
+    </div>
+</div>

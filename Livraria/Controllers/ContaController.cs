@@ -10,14 +10,14 @@ namespace Livraria.Controllers
 {
     public class ContaController : Controller
     {
-        private readonly ILoginRepository _loginRepository;
+        private readonly IUsuarioRepository _usuarioRepository;
         private readonly IPasswordHasher<Login> _passwordHasher;
 
         public ContaController(
-            ILoginRepository loginRepository,
+            IUsuarioRepository usuarioRepository,
             IPasswordHasher<Login> passwordHasher)
         {
-            _loginRepository = loginRepository;
+            _usuarioRepository = usuarioRepository;
             _passwordHasher = passwordHasher;
         }
 
@@ -34,7 +34,7 @@ namespace Livraria.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            var usuario = await _loginRepository.ObterPorEmailAsync(model.Email);
+            var usuario = await _usuarioRepository.ObterPorEmailAsync(model.Email);
 
             if (usuario == null)
             {
@@ -75,5 +75,50 @@ namespace Livraria.Controllers
 
             return RedirectToAction("Index", "Home");
         }
+        
+        [HttpGet]
+        public IActionResult Cadastro()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Cadastro(CadastroViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            bool emailExiste = await _usuarioRepository.EmailExisteAsync(model.Email);
+
+            if (emailExiste)
+            {
+                ModelState.AddModelError(
+                    "Email",
+                    "Este e-mail já está cadastrado."
+                );
+
+                return View(model);
+            }
+
+            var usuario = new Login
+            {
+                Nome = model.Nome,
+                Email = model.Email
+            };
+
+            usuario.SenhaHash = _passwordHasher.HashPassword(
+                usuario,
+                model.Senha
+            );
+
+            await _usuarioRepository.CadastrarAsync(usuario);
+
+            TempData["Mensagem"] =
+                "Cadastro realizado com sucesso! Faça seu login.";
+
+            return RedirectToAction("Login");
+        }
     }
 }
+  
