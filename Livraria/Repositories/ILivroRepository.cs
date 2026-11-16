@@ -1,17 +1,11 @@
 ﻿
 using Livraria.Models;
 
-
 namespace Livraria.Repositories
 {
-
-
     public interface ILivroRepository
     {
-
         Task<bool> Cadastrar(Livro livro);
-
-        Task<List<Livro>> ListarTodos();
 
         Task<Livro?> BuscarPorId(int id);
 

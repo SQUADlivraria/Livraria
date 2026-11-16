@@ -1,6 +1,6 @@
 ﻿
-using MySqlConnector;
 using Livraria.Models;
+using MySqlConnector;
 
 namespace Livraria.Repositories
 {
@@ -10,58 +10,28 @@ namespace Livraria.Repositories
 
         public LivroRepository(IConfiguration configuration)
         {
-            _connectionString = configuration.GetConnectionString("DefaultConnection") ?? string.Empty;
+            _connectionString = configuration.GetConnectionString("DefaultConnection")
+                ?? string.Empty;
         }
 
         public async Task<bool> Cadastrar(Livro livro)
         {
-            try
-            {
-                using var conexao = new MySqlConnection(_connectionString);
-                await conexao.OpenAsync();
-
-                var query = "INSERT INTO livro (isbn, nome, descricao, valor) VALUES (@Isbn, @Nome, @Descricao, @Valor)";
-                using var comando = new MySqlCommand(query, conexao);
-
-                comando.Parameters.AddWithValue("@Isbn", livro.Isbn);
-                comando.Parameters.AddWithValue("@Nome", livro.Nome);
-                comando.Parameters.AddWithValue("@Descricao", livro.Descricao);
-                comando.Parameters.AddWithValue("@Valor", livro.Valor);
-
-                var linhasAfetadas = await comando.ExecuteNonQueryAsync();
-                return linhasAfetadas > 0;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Erro ao cadastrar livro no MySQL: {ex.Message}");
-            }
-        }
-
-        public async Task<List<Livro>> ListarTodos()
-        {
-            var livros = new List<Livro>();
-
             using var conexao = new MySqlConnection(_connectionString);
             await conexao.OpenAsync();
 
-            var query = "SELECT Id, Isbn, Nome, Descricao, Valor FROM livro";
+            var query = @"INSERT INTO livro (isbn, nome, descricao, valor)
+                          VALUES (@Isbn, @Nome, @Descricao, @Valor)";
+
             using var comando = new MySqlCommand(query, conexao);
 
-            using var reader = await comando.ExecuteReaderAsync();
+            comando.Parameters.AddWithValue("@Isbn", livro.Isbn);
+            comando.Parameters.AddWithValue("@Nome", livro.Nome);
+            comando.Parameters.AddWithValue("@Descricao", livro.Descricao);
+            comando.Parameters.AddWithValue("@Valor", livro.Valor);
 
-            while (await reader.ReadAsync())
-            {
-                livros.Add(new Livro
-                {
-                    Id = Convert.ToInt32(reader["Id"]),
-                    Isbn = reader["Isbn"] == DBNull.Value ? string.Empty : Convert.ToString(reader["Isbn"])!,
-                    Nome = reader["Nome"] == DBNull.Value ? string.Empty : Convert.ToString(reader["Nome"])!,
-                    Descricao = reader["Descricao"] == DBNull.Value ? string.Empty : Convert.ToString(reader["Descricao"])!,
-                    Valor = reader["Valor"] == DBNull.Value ? 0 : Convert.ToDecimal(reader["Valor"])
-                });
-            }
+            var linhasAfetadas = await comando.ExecuteNonQueryAsync();
 
-            return livros;
+            return linhasAfetadas > 0;
         }
 
         public async Task<Livro?> BuscarPorId(int id)
@@ -69,7 +39,10 @@ namespace Livraria.Repositories
             using var conexao = new MySqlConnection(_connectionString);
             await conexao.OpenAsync();
 
-            var query = "SELECT Id, Isbn, Nome, Descricao, Valor FROM livro WHERE Id = @Id";
+            var query = @"SELECT Id, Isbn, Nome, Descricao, Valor
+                          FROM livro
+                          WHERE Id = @Id";
+
             using var comando = new MySqlCommand(query, conexao);
 
             comando.Parameters.AddWithValue("@Id", id);
@@ -81,10 +54,14 @@ namespace Livraria.Repositories
                 return new Livro
                 {
                     Id = Convert.ToInt32(reader["Id"]),
-                    Isbn = reader["Isbn"] == DBNull.Value ? string.Empty : Convert.ToString(reader["Isbn"])!,
-                    Nome = reader["Nome"] == DBNull.Value ? string.Empty : Convert.ToString(reader["Nome"])!,
-                    Descricao = reader["Descricao"] == DBNull.Value ? string.Empty : Convert.ToString(reader["Descricao"])!,
-                    Valor = reader["Valor"] == DBNull.Value ? 0 : Convert.ToDecimal(reader["Valor"])
+                    Isbn = reader["Isbn"] == DBNull.Value
+                        ? string.Empty : Convert.ToString(reader["Isbn"])!,
+                    Nome = reader["Nome"] == DBNull.Value
+                        ? string.Empty : Convert.ToString(reader["Nome"])!,
+                    Descricao = reader["Descricao"] == DBNull.Value
+                        ? string.Empty : Convert.ToString(reader["Descricao"])!,
+                    Valor = reader["Valor"] == DBNull.Value
+                        ? 0 : Convert.ToDecimal(reader["Valor"])
                 };
             }
 
@@ -112,6 +89,7 @@ namespace Livraria.Repositories
             comando.Parameters.AddWithValue("@Valor", livro.Valor);
 
             var linhasAfetadas = await comando.ExecuteNonQueryAsync();
+
             return linhasAfetadas > 0;
         }
 
@@ -121,11 +99,13 @@ namespace Livraria.Repositories
             await conexao.OpenAsync();
 
             var query = "DELETE FROM livro WHERE Id = @Id";
+
             using var comando = new MySqlCommand(query, conexao);
 
             comando.Parameters.AddWithValue("@Id", id);
 
             var linhasAfetadas = await comando.ExecuteNonQueryAsync();
+
             return linhasAfetadas > 0;
         }
     }
